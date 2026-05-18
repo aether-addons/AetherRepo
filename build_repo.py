@@ -21,7 +21,7 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 REPO_ID = "repository.aetherscraper"
 REPO_NAME = "Aether Repo"
-REPO_VERSION = "0.1.5"
+REPO_VERSION = "0.1.6"
 GITHUB_OWNER = "aether-addons"
 GITHUB_REPOSITORY = "AetherRepo"
 DEFAULT_BRANCH = "main"
@@ -44,7 +44,7 @@ EXCLUDE_DIRS = {
     "dist",
     "tests",
 }
-EXCLUDE_SUFFIXES = {".pyc", ".pyo", ".pyd", ".swp", ".tmp", ".log", ".zip"}
+EXCLUDE_SUFFIXES = {".pyc", ".pyo", ".pyd", ".swp", ".tmp", ".log", ".zip", ".md5"}
 EXCLUDE_FILES = {"index.html"}
 
 
@@ -54,10 +54,6 @@ def repo_root() -> Path:
 
 def github_raw_url(branch: str = DEFAULT_BRANCH) -> str:
     return f"https://raw.githubusercontent.com/{GITHUB_OWNER}/{GITHUB_REPOSITORY}/{branch}/"
-
-
-def github_pages_url() -> str:
-    return f"https://{GITHUB_OWNER}.github.io/{GITHUB_REPOSITORY}/"
 
 
 def default_windows_file_url(root: Path) -> str:
@@ -305,7 +301,7 @@ def main() -> int:
     elif args.local_file_url:
         datadir_url = default_windows_file_url(root)
     else:
-        datadir_url = github_pages_url()
+        datadir_url = github_raw_url(args.github_branch)
     build(Path(args.source).resolve(), addons, datadir_url.rstrip("/") + "/")
     return 0
 

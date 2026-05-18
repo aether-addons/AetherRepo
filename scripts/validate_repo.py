@@ -79,15 +79,16 @@ def validate_repository_urls(root: Path) -> None:
     )
     if repo_ext is None:
         fail("repository addon missing xbmc.addon.repository extension")
+    assert repo_ext is not None
     repo_dir = repo_ext.find("dir")
     if repo_dir is None:
         fail("repository extension missing dir block")
     for tag in ("info", "checksum", "datadir"):
         node = repo_dir.find(tag)
         if node is None or not (node.text or "").startswith(
-            "https://aether-addons.github.io/AetherRepo/"
+            "https://raw.githubusercontent.com/aether-addons/AetherRepo/main/"
         ):
-            fail(f"repository {tag} URL is not GitHub Pages URL")
+            fail(f"repository {tag} URL is not GitHub raw URL")
     hashes = repo_dir.find("hashes")
     if hashes is None or (hashes.text or "").strip().lower() != "false":
         fail("repository dir missing <hashes>false</hashes>")
