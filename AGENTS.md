@@ -5,38 +5,40 @@ Current scraper add-on source/development lives in sibling repo: https://github.
 
 ## Required AI workflow
 
-1. Treat this repo as generated release output, not source development workspace.
-2. Make add-on code changes in the matching source repo first (currently `../AetherScraper` for scraper add-ons).
-3. Bump changed add-on versions in source `addon.xml` files before rebuilding release zips.
-4. Rebuild from this repo after source changes:
+1. Treat this repo as generated Kodi install feed, not add-on source.
+2. Source repos are listed in `repo-sources.json` (`sources[].repository`, `branch`, `addons`). Add new hosted add-ons there, not in `build_repo.py`.
+3. Normal release flow is automatic:
+   - change source repo add-on code
+   - bump changed source `addon.xml` version
+   - push source repo
+   - source workflow dispatches `AetherRepo`
+   - `AetherRepo/.github/workflows/publish.yml` clones all `repo-sources.json` sources, rebuilds, validates, commits generated feed
+4. Do not manually edit generated feed/zips unless fixing repo tooling or user asks for local release rebuild.
+5. Manual local rebuild/validation, if needed:
 
 ```bash
-python3 build_repo.py
+python3 scripts/checkout_manifest_sources.py repo-sources.json ../Sources
+python3 build_repo.py --sources-manifest repo-sources.json --source-root ../Sources
 python3 scripts/validate_repo.py .
 ```
 
-5. Default feed must stay GitHub raw:
+6. Default feed must stay GitHub raw:
 
 ```text
 https://raw.githubusercontent.com/aether-addons/AetherRepo/main/
 ```
 
-6. Use `python3 build_repo.py --local-file-url` only for local Kodi testing; never commit local `file://` feed URLs.
-7. Keep generated files committed:
-   - `addons.xml`
-   - `addons.xml.md5`
-   - `addons.xml.sha256`
-   - `repository.aetherscraper/*.zip`
-   - hosted add-on `*.zip` files
-8. Keep package layout clean: each zip has exactly one top-level folder matching add-on id and contains `addon.xml`.
-9. Do not commit cache/dev artifacts (`__pycache__`, `.ruff_cache`, `.pi-lens`, test output, venvs).
-10. Commit/push matching source repo changes first, then commit/push this regenerated repo output.
-11. If adding new add-ons, add source folder under the matching source repo (currently `../AetherScraper` for scraper add-ons), then include with `--addon addon.id` or update `DEFAULT_ADDONS` in `build_repo.py`.
-12. Validate CI config when changing workflows.
+7. Use `python3 build_repo.py --local-file-url` only for local Kodi testing; never commit local `file://` feed URLs.
+8. Keep generated files committed when this repo is rebuilt: `addons.xml`, checksums, repo zip, hosted add-on zips/md5.
+9. Keep zip layout clean: exactly one top-level folder matching add-on id, with `addon.xml`.
+10. Do not commit cache/dev artifacts (`__pycache__`, `.ruff_cache`, `.pi-lens`, test output, venvs).
+11. Validate CI config when changing workflows.
 
-## CI
+## CI / automation
 
-`.github/workflows/ci.yml` checks out both repos, rebuilds the feed, validates zip/checksum/layout, and fails if generated files are not committed.
+- `publish.yml`: triggered by `repository_dispatch` from source repos or manual run; rebuilds and commits feed.
+- `ci.yml`: rebuilds from `repo-sources.json`, validates, fails if generated output is stale.
+- Each source repo that should auto-publish needs a small notify workflow that dispatches `aether-addons/AetherRepo` event `source-updated` using the GitHub App secrets.
 
 ## Safety
 
