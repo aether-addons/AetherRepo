@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build Kodi repository files for AetherScraper Repo.
+"""Build Kodi repository files for Aether Repo.
 
 GitHub layout:
 - AetherScraper: source/development repository
@@ -20,8 +20,8 @@ from urllib.parse import quote
 from zipfile import ZIP_DEFLATED, ZipFile
 
 REPO_ID = "repository.aetherscraper"
-REPO_NAME = "AetherScraper Repo"
-REPO_VERSION = "0.1.1"
+REPO_NAME = "Aether Repo"
+REPO_VERSION = "0.1.2"
 GITHUB_OWNER = "aether-addons"
 GITHUB_REPOSITORY = "AetherRepo"
 DEFAULT_BRANCH = "main"

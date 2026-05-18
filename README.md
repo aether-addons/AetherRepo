@@ -51,7 +51,7 @@ python3 build_repo.py --datadir-url "https://raw.githubusercontent.com/aether-ad
 1. Download or clone this repo.
 2. In Kodi: **Add-ons -> Install from zip file**.
 3. Pick `repository.aetherscraper/repository.aetherscraper-0.1.0.zip`.
-4. Use **Install from repository -> AetherScraper Repo**.
+4. Use **Install from repository -> Aether Repo**.
 5. Install `AetherScraper Tools`; Kodi also installs `script.module.aetherscraper` dependency.
 
 ## Generated files
