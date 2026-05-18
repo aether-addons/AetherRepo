@@ -23,7 +23,7 @@
       </assets>
     </extension>
   </addon>
-  <addon id="script.module.aetherscraper" version="0.1.5" name="AetherScraper" provider-name="AetherScraper">
+  <addon id="script.module.aetherscraper" version="0.1.6" name="AetherScraper" provider-name="AetherScraper">
     <requires>
       <import addon="xbmc.python" version="3.0.1" />
     </requires>
@@ -35,7 +35,7 @@
       <platform>all</platform>
       <license>MIT</license>
       <source>https://example.invalid/aetherscraper</source>
-      <news>Fix TorBox/TB Torznab request compatibility with Magneto and return magnet URLs from info hashes.</news>
+      <news>Remove duplicate legacy TorBox Torznab provider entry while preserving legacy setting aliases.</news>
       <assets>
         <icon>resources/icon.png</icon>
         <fanart>resources/fanart.png</fanart>
