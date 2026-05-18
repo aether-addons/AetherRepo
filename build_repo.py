@@ -177,17 +177,30 @@ def write_pages_indexes(root: Path, addon_dirs: list[Path]) -> None:
     repo_dir = next(addon_dir for addon_dir in addon_dirs if addon_dir.name == REPO_ID)
     repo_id, repo_version, _ = parse_addon(repo_dir)
     zip_name = f"{repo_id}-{repo_version}.zip"
-    zip_href = f"{repo_id}/{zip_name}"
+
+    repo_index = root / repo_id / "index.html"
+    repo_index.write_text(
+        "<!doctype html>\n"
+        '<html><head><meta charset="utf-8">'
+        f"<title>Index of /AetherRepo/{html.escape(repo_id)}</title></head>\n"
+        "<body>\n"
+        f"  <h1>Index of /AetherRepo/{html.escape(repo_id)}</h1>\n"
+        "  <ul>\n"
+        f'    <li><a href="{html.escape(zip_name)}">{html.escape(zip_name)}</a></li>\n'
+        "  </ul>\n"
+        "</body></html>\n",
+        encoding="utf-8",
+    )
 
     (root / "index.html").write_text(
         "<!doctype html>\n"
         '<html><head><meta charset="utf-8">'
-        "<title>AetherRepo</title></head>\n"
+        "<title>Index of /AetherRepo</title></head>\n"
         "<body>\n"
-        "  <h1>AetherRepo</h1>\n"
-        "  <p>Install this zip in Kodi, then install add-ons from the AetherScraper Repo.</p>\n"
+        "  <h1>Index of /AetherRepo</h1>\n"
+        "  <p>Open repository.aetherscraper, then install the repository zip in Kodi.</p>\n"
         "  <ul>\n"
-        f'    <li><a href="{html.escape(zip_href)}">{html.escape(zip_name)}</a></li>\n'
+        f'    <li><a href="{html.escape(repo_id)}/">{html.escape(repo_id)}/</a></li>\n'
         "  </ul>\n"
         "</body></html>\n",
         encoding="utf-8",
