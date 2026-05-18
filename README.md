@@ -8,7 +8,7 @@ GitHub raw feed:
 https://raw.githubusercontent.com/aether-addons/AetherRepo/main/
 ```
 
-Source/development repo:
+Current scraper add-on source repo:
 
 ```text
 https://github.com/aether-addons/AetherScraper
@@ -20,11 +20,11 @@ https://github.com/aether-addons/AetherScraper
 - `script.module.aetherscraper`
 - `plugin.program.aetherscraper`
 
-More add-ons can be hosted by adding their source folders to `AetherScraper` and passing more `--addon` flags to `build_repo.py`.
+More add-ons can be hosted by pointing `--source` at source folders for any Aether add-on family and passing more `--addon` flags to `build_repo.py`.
 
 ## Build
 
-From this folder, with sibling `../AetherScraper` checked out:
+From this folder, with `../AetherScraper` checked out for current scraper add-ons:
 
 ```bash
 python3 build_repo.py
@@ -50,15 +50,15 @@ python3 build_repo.py --datadir-url "https://raw.githubusercontent.com/aether-ad
 
 1. Download or clone this repo.
 2. In Kodi: **Add-ons -> Install from zip file**.
-3. Pick `repository.aetherscraper/repository.aetherscraper-0.1.0.zip`.
+3. Pick latest `repository.aetherscraper/repository.aetherscraper-*.zip`.
 4. Use **Install from repository -> Aether Repo**.
-5. Install `AetherScraper Tools`; Kodi also installs `script.module.aetherscraper` dependency.
+5. Install wanted add-ons from **Aether Repo**. For current scraper tools, Kodi also installs `script.module.aetherscraper` dependency.
 
 ## Generated files
 
 - `addons.xml`
 - `addons.xml.md5` (Kodi compatibility)
 - `addons.xml.sha256`
-- `repository.aetherscraper/repository.aetherscraper-0.1.0.zip`
-- `script.module.aetherscraper/script.module.aetherscraper-0.1.0.zip`
-- `plugin.program.aetherscraper/plugin.program.aetherscraper-0.1.0.zip`
+- `repository.aetherscraper/repository.aetherscraper-*.zip`
+- `script.module.aetherscraper/script.module.aetherscraper-*.zip`
+- `plugin.program.aetherscraper/plugin.program.aetherscraper-*.zip`

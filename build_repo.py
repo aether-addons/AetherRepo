@@ -2,7 +2,7 @@
 """Build Kodi repository files for Aether Repo.
 
 GitHub layout:
-- AetherScraper: source/development repository
+- AetherScraper: current scraper add-on source/development repository
 - AetherRepo: Kodi install repository with addons.xml, checksums, and zips
 """
 
@@ -21,7 +21,7 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 REPO_ID = "repository.aetherscraper"
 REPO_NAME = "Aether Repo"
-REPO_VERSION = "0.1.6"
+REPO_VERSION = "0.1.7"
 GITHUB_OWNER = "aether-addons"
 GITHUB_REPOSITORY = "AetherRepo"
 DEFAULT_BRANCH = "main"
@@ -145,7 +145,7 @@ def write_repository_addon(root: Path, source: Path, datadir_url: str) -> Path:
     addon_xml = repo_dir / "addon.xml"
     addon_xml.write_text(
         f"""<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n"""
-        f'''<addon id="{REPO_ID}" version="{REPO_VERSION}" name="{REPO_NAME}" provider-name="AetherScraper">\n'''
+        f'''<addon id="{REPO_ID}" version="{REPO_VERSION}" name="{REPO_NAME}" provider-name="Aether">\n'''
         f"""  <requires>\n"""
         f"""    <import addon="xbmc.addon" version="12.0.0" />\n"""
         f"""  </requires>\n"""
@@ -158,8 +158,8 @@ def write_repository_addon(root: Path, source: Path, datadir_url: str) -> Path:
         f"""    </dir>\n"""
         f"""  </extension>\n"""
         f"""  <extension point="xbmc.addon.metadata">\n"""
-        f"""    <summary lang="en_GB">Repository for AetherScraper add-ons.</summary>\n"""
-        f"""    <description lang="en_GB">Installs and updates AetherScraper modules and companion add-ons.</description>\n"""
+        f"""    <summary lang="en_GB">Repository for Aether add-ons.</summary>\n"""
+        f"""    <description lang="en_GB">Installs and updates Aether add-ons.</description>\n"""
         f"""    <platform>all</platform>\n"""
         f"""    <license>MIT</license>\n"""
         f"""    <assets>\n"""
@@ -266,11 +266,11 @@ def build(source: Path, addon_ids: list[str], datadir_url: str) -> None:
 def main() -> int:
     root = repo_root()
     default_branch = os.environ.get("GITHUB_REF_NAME") or DEFAULT_BRANCH
-    parser = argparse.ArgumentParser(description="Build AetherScraper Kodi repository")
+    parser = argparse.ArgumentParser(description="Build Aether Kodi repository")
     parser.add_argument(
         "--source",
         default=str(root.parent / "AetherScraper"),
-        help="Folder containing source addon folders",
+        help="Folder containing source add-on folders; defaults to current scraper source repo",
     )
     parser.add_argument(
         "--github-branch",

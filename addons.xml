@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <addons>
-  <addon id="repository.aetherscraper" version="0.1.6" name="Aether Repo" provider-name="AetherScraper">
+  <addon id="repository.aetherscraper" version="0.1.7" name="Aether Repo" provider-name="Aether">
     <requires>
       <import addon="xbmc.addon" version="12.0.0" />
     </requires>
@@ -13,8 +13,8 @@
       </dir>
     </extension>
     <extension point="xbmc.addon.metadata">
-      <summary lang="en_GB">Repository for AetherScraper add-ons.</summary>
-      <description lang="en_GB">Installs and updates AetherScraper modules and companion add-ons.</description>
+      <summary lang="en_GB">Repository for Aether add-ons.</summary>
+      <description lang="en_GB">Installs and updates Aether add-ons.</description>
       <platform>all</platform>
       <license>MIT</license>
       <assets>
