@@ -25,7 +25,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Build repository feed
         run: python3 AetherRepo/build_repo.py --source AetherScraper --github-branch main

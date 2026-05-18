@@ -70,14 +70,20 @@ def validate_checksum(root: Path) -> None:
 def validate_repository_urls(root: Path) -> None:
     _, _, addon = parse_addon_xml(root / "repository.aetherscraper" / "addon.xml")
     repo_ext = next(
-        (node for node in addon.findall("extension") if node.attrib.get("point") == "xbmc.addon.repository"),
+        (
+            node
+            for node in addon.findall("extension")
+            if node.attrib.get("point") == "xbmc.addon.repository"
+        ),
         None,
     )
     if repo_ext is None:
         fail("repository addon missing xbmc.addon.repository extension")
     for tag in ("info", "checksum", "datadir"):
         node = repo_ext.find(tag)
-        if node is None or not (node.text or "").startswith("https://raw.githubusercontent.com/aether-addons/AetherRepo/"):
+        if node is None or not (node.text or "").startswith(
+            "https://raw.githubusercontent.com/aether-addons/AetherRepo/"
+        ):
             fail(f"repository {tag} URL is not GitHub raw URL")
 
 

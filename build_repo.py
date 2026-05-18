@@ -179,7 +179,9 @@ def write_addons_xml(root: Path, addon_dirs: list[Path]) -> None:
     # Kodi repository clients expect the <checksum> URL to contain an MD5 digest.
     kodi_digest = hashlib.new("md" + "5", data, usedforsecurity=False).hexdigest()
     (root / "addons.xml.md5").write_text(kodi_digest, encoding="utf-8")
-    (root / "addons.xml.sha256").write_text(hashlib.sha256(data).hexdigest(), encoding="utf-8")
+    (root / "addons.xml.sha256").write_text(
+        hashlib.sha256(data).hexdigest(), encoding="utf-8"
+    )
     ET.parse(addons_xml)  # fail fast if malformed
 
 
