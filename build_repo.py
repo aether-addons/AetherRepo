@@ -18,7 +18,7 @@ import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from urllib.parse import quote
-from zipfile import ZIP_DEFLATED, ZipFile
+from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 
 REPO_ID = "repository.aetherscraper"
 REPO_NAME = "Aether Repo"
@@ -104,7 +104,10 @@ def zip_addon(addon_dir: Path, out_zip: Path) -> None:
             rel = file_path.relative_to(addon_dir)
             if should_skip(rel):
                 continue
-            archive.write(file_path, Path(addon_id, rel).as_posix())
+            info = ZipInfo(Path(addon_id, rel).as_posix(), date_time=(1980, 1, 1, 0, 0, 0))
+            info.compress_type = ZIP_DEFLATED
+            info.external_attr = 0o644 << 16
+            archive.writestr(info, file_path.read_bytes())
     with ZipFile(out_zip) as archive:
         names = archive.namelist()
     needed = f"{addon_id}/addon.xml"
@@ -130,18 +133,21 @@ def indent(element: ET.Element, level: int = 0) -> None:
         element.tail = pad
 
 
-def write_repository_addon(root: Path, source: Path, datadir_url: str) -> Path:
+def write_repository_addon(root: Path, source_roots: list[Path], datadir_url: str) -> Path:
     repo_dir = root / REPO_ID
     resources = repo_dir / "resources"
     resources.mkdir(parents=True, exist_ok=True)
 
     # Keep repository-specific artwork when present; fall back to scraper artwork.
-    source_base = source / "script.module.aetherscraper" / "resources"
     for name in ("icon.png", "fanart.png"):
-        src = source_base / name
         dst = resources / name
-        if src.is_file() and not dst.is_file():
-            shutil.copy2(src, dst)
+        if dst.is_file():
+            continue
+        for source_root in source_roots:
+            src = source_root / "script.module.aetherscraper" / "resources" / name
+            if src.is_file():
+                shutil.copy2(src, dst)
+                break
 
     addon_xml = repo_dir / "addon.xml"
     addon_xml.write_text(
@@ -230,7 +236,9 @@ def write_addons_xml(root: Path, addon_dirs: list[Path]) -> None:
     ET.parse(addons_xml)  # fail fast if malformed
 
 
-def load_addon_ids(source: Path, manifest: Path | None, cli_addons: list[str] | None) -> list[str]:
+def load_addon_ids(
+    source: Path, manifest: Path | None, cli_addons: list[str] | None
+) -> list[str]:
     if cli_addons:
         return cli_addons
 
@@ -240,22 +248,60 @@ def load_addon_ids(source: Path, manifest: Path | None, cli_addons: list[str] | 
 
     data = json.loads(manifest_path.read_text(encoding="utf-8"))
     addons = data.get("addons")
-    if not isinstance(addons, list) or not all(isinstance(addon, str) for addon in addons):
+    if not isinstance(addons, list) or not all(
+        isinstance(addon, str) for addon in addons
+    ):
         raise ValueError(f"{manifest_path} must contain an 'addons' string list")
     if not addons:
         raise ValueError(f"{manifest_path} must list at least one add-on")
     return addons
 
 
-def build(source: Path, addon_ids: list[str], datadir_url: str) -> None:
-    root = repo_root()
-    repo_dir = write_repository_addon(root, source, datadir_url)
+def source_dir_from_entry(entry: dict[str, object], source_root: Path) -> Path:
+    path = entry.get("path")
+    if isinstance(path, str) and path:
+        return (source_root / path).resolve()
 
-    addon_dirs = [repo_dir]
-    for addon_id in addon_ids:
-        addon_dir = source / addon_id
-        parse_addon(addon_dir)
-        addon_dirs.append(addon_dir)
+    repository = entry.get("repository")
+    if not isinstance(repository, str) or "/" not in repository:
+        raise ValueError("each source needs 'repository' like 'owner/name' or 'path'")
+    return (source_root / repository.rsplit("/", 1)[1]).resolve()
+
+
+def load_manifest_addon_dirs(manifest_path: Path, source_root: Path) -> tuple[list[Path], list[Path]]:
+    data = json.loads(manifest_path.read_text(encoding="utf-8"))
+    sources = data.get("sources")
+    if not isinstance(sources, list) or not sources:
+        raise ValueError(f"{manifest_path} must contain a non-empty 'sources' list")
+
+    addon_dirs: list[Path] = []
+    source_dirs: list[Path] = []
+    seen: set[str] = set()
+    for entry in sources:
+        if not isinstance(entry, dict):
+            raise ValueError(f"{manifest_path} source entries must be objects")
+        source_dir = source_dir_from_entry(entry, source_root)
+        source_dirs.append(source_dir)
+        addons = entry.get("addons")
+        if not isinstance(addons, list) or not addons or not all(
+            isinstance(addon, str) for addon in addons
+        ):
+            raise ValueError(f"{manifest_path} source entries need non-empty 'addons' string lists")
+        for addon_id in addons:
+            if addon_id in seen:
+                raise ValueError(f"duplicate addon id in {manifest_path}: {addon_id}")
+            seen.add(addon_id)
+            addon_dir = source_dir / addon_id
+            parse_addon(addon_dir)
+            addon_dirs.append(addon_dir)
+    return addon_dirs, source_dirs
+
+
+def build(addon_dirs: list[Path], source_roots: list[Path], datadir_url: str) -> None:
+    root = repo_root()
+    repo_dir = write_repository_addon(root, source_roots, datadir_url)
+
+    addon_dirs = [repo_dir, *addon_dirs]
 
     for addon_dir in addon_dirs:
         addon_id, version, _ = parse_addon(addon_dir)
@@ -271,7 +317,8 @@ def build(source: Path, addon_ids: list[str], datadir_url: str) -> None:
     write_pages_indexes(root, addon_dirs)
 
     print(f"Repository: {root}")
-    print(f"Source:     {source}")
+    for source_root in source_roots:
+        print(f"Source:     {source_root}")
     print(f"Data URL:   {datadir_url}")
     for addon_dir in addon_dirs:
         addon_id, version, _ = parse_addon(addon_dir)
@@ -316,18 +363,40 @@ def main() -> int:
         default=None,
         help="JSON file with an 'addons' list. Defaults to <source>/repo-addons.json when present.",
     )
+    parser.add_argument(
+        "--sources-manifest",
+        default=None,
+        help="JSON file with a 'sources' list for add-ons from multiple repositories.",
+    )
+    parser.add_argument(
+        "--source-root",
+        default=str(root.parent),
+        help="Folder containing checked-out source repositories for --sources-manifest.",
+    )
     args = parser.parse_args()
 
     source = Path(args.source).resolve()
     manifest = Path(args.addon_manifest).resolve() if args.addon_manifest else None
-    addons = load_addon_ids(source, manifest, args.addons)
+    sources_manifest = Path(args.sources_manifest).resolve() if args.sources_manifest else None
     if args.datadir_url:
         datadir_url = args.datadir_url
     elif args.local_file_url:
         datadir_url = default_windows_file_url(root)
     else:
         datadir_url = github_raw_url(args.github_branch)
-    build(source, addons, datadir_url.rstrip("/") + "/")
+    if sources_manifest:
+        addon_dirs, source_roots = load_manifest_addon_dirs(
+            sources_manifest, Path(args.source_root).resolve()
+        )
+    else:
+        addons = load_addon_ids(source, manifest, args.addons)
+        addon_dirs = []
+        for addon_id in addons:
+            addon_dir = source / addon_id
+            parse_addon(addon_dir)
+            addon_dirs.append(addon_dir)
+        source_roots = [source]
+    build(addon_dirs, source_roots, datadir_url.rstrip("/") + "/")
     return 0
 
 

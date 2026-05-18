@@ -1,0 +1,12 @@
+{
+  "sources": [
+    {
+      "repository": "aether-addons/AetherScraper",
+      "branch": "main",
+      "addons": [
+        "script.module.aetherscraper",
+        "plugin.program.aetherscraper"
+      ]
+    }
+  ]
+}
