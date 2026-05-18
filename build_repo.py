@@ -21,7 +21,7 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 REPO_ID = "repository.aetherscraper"
 REPO_NAME = "Aether Repo"
-REPO_VERSION = "0.1.4"
+REPO_VERSION = "0.1.5"
 GITHUB_OWNER = "aether-addons"
 GITHUB_REPOSITORY = "AetherRepo"
 DEFAULT_BRANCH = "main"
@@ -154,9 +154,12 @@ def write_repository_addon(root: Path, source: Path, datadir_url: str) -> Path:
         f"""    <import addon="xbmc.addon" version="12.0.0" />\n"""
         f"""  </requires>\n"""
         f'''  <extension point="xbmc.addon.repository" name="{REPO_NAME}">\n'''
-        f"""    <info compressed="false">{datadir_url}addons.xml</info>\n"""
-        f"""    <checksum>{datadir_url}addons.xml.md5</checksum>\n"""
-        f"""    <datadir zip="true">{datadir_url}</datadir>\n"""
+        f"""    <dir>\n"""
+        f"""      <info compressed="false">{datadir_url}addons.xml</info>\n"""
+        f"""      <checksum>{datadir_url}addons.xml.md5</checksum>\n"""
+        f"""      <datadir zip="true">{datadir_url}</datadir>\n"""
+        f"""      <hashes>false</hashes>\n"""
+        f"""    </dir>\n"""
         f"""  </extension>\n"""
         f"""  <extension point="xbmc.addon.metadata">\n"""
         f"""    <summary lang="en_GB">Repository for AetherScraper add-ons.</summary>\n"""
@@ -242,7 +245,13 @@ def build(source: Path, addon_ids: list[str], datadir_url: str) -> None:
 
     for addon_dir in addon_dirs:
         addon_id, version, _ = parse_addon(addon_dir)
-        zip_addon(addon_dir, root / addon_id / f"{addon_id}-{version}.zip")
+        out_zip = root / addon_id / f"{addon_id}-{version}.zip"
+        zip_addon(addon_dir, out_zip)
+        zip_data = out_zip.read_bytes()
+        (out_zip.with_suffix(out_zip.suffix + ".md5")).write_text(
+            hashlib.new("md" + "5", zip_data, usedforsecurity=False).hexdigest(),
+            encoding="utf-8",
+        )
 
     write_addons_xml(root, addon_dirs)
     write_pages_indexes(root, addon_dirs)

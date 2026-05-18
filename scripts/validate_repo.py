@@ -24,7 +24,7 @@ FORBIDDEN_PARTS = {
     "dist",
     "tests",
 }
-FORBIDDEN_SUFFIXES = {".pyc", ".pyo", ".pyd", ".swp", ".tmp", ".log", ".zip"}
+FORBIDDEN_SUFFIXES = {".pyc", ".pyo", ".pyd", ".swp", ".tmp", ".log", ".zip", ".md5"}
 KODI_CHECKSUM_FILE = "addons.xml.md5"
 SHA256_CHECKSUM_FILE = "addons.xml.sha256"
 
@@ -79,18 +79,33 @@ def validate_repository_urls(root: Path) -> None:
     )
     if repo_ext is None:
         fail("repository addon missing xbmc.addon.repository extension")
+    repo_dir = repo_ext.find("dir")
+    if repo_dir is None:
+        fail("repository extension missing dir block")
     for tag in ("info", "checksum", "datadir"):
-        node = repo_ext.find(tag)
+        node = repo_dir.find(tag)
         if node is None or not (node.text or "").startswith(
             "https://aether-addons.github.io/AetherRepo/"
         ):
             fail(f"repository {tag} URL is not GitHub Pages URL")
+    hashes = repo_dir.find("hashes")
+    if hashes is None or (hashes.text or "").strip().lower() != "false":
+        fail("repository dir missing <hashes>false</hashes>")
 
 
 def validate_zip(root: Path, addon_id: str, version: str) -> None:
     zip_path = root / addon_id / f"{addon_id}-{version}.zip"
     if not zip_path.is_file():
         fail(f"missing {zip_path}")
+    zip_md5_path = zip_path.with_suffix(zip_path.suffix + ".md5")
+    if not zip_md5_path.is_file():
+        fail(f"missing {zip_md5_path}")
+    expected_zip_md5 = hashlib.new(
+        "md" + "5", zip_path.read_bytes(), usedforsecurity=False
+    ).hexdigest()
+    actual_zip_md5 = zip_md5_path.read_text(encoding="utf-8").strip()
+    if actual_zip_md5 != expected_zip_md5:
+        fail(f"{zip_md5_path} mismatch: {actual_zip_md5} != {expected_zip_md5}")
     with ZipFile(zip_path) as archive:
         names = [name for name in archive.namelist() if name and not name.endswith("/")]
     roots = {name.split("/", 1)[0] for name in names}
