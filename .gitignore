@@ -1,0 +1,20 @@
+# Local agent/tooling artifacts
+.agents/
+.pi-lens/
+
+# Python/cache artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.pyright/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Keep Kodi release zip files tracked in this repository.
+!*.zip

@@ -1,0 +1,38 @@
+name: AetherRepo CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout AetherRepo
+        uses: actions/checkout@v4
+        with:
+          path: AetherRepo
+
+      - name: Checkout AetherScraper source
+        uses: actions/checkout@v4
+        with:
+          repository: aether-addons/AetherScraper
+          path: AetherScraper
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Build repository feed
+        run: python3 AetherRepo/build_repo.py --source AetherScraper --github-branch main
+
+      - name: Validate repository feed
+        run: python3 AetherRepo/scripts/validate_repo.py AetherRepo
+
+      - name: Ensure generated files are committed
+        working-directory: AetherRepo
+        run: git diff --exit-code -- addons.xml addons.xml.md5 addons.xml.sha256 repository.aetherscraper script.module.aetherscraper plugin.program.aetherscraper

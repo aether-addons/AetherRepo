@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='utf-8'?>
+<addons>
+  <addon id="repository.aetherscraper" version="0.1.0" name="AetherScraper Repo" provider-name="AetherScraper">
+    <requires>
+      <import addon="xbmc.addon" version="12.0.0" />
+    </requires>
+    <extension point="xbmc.addon.repository" name="AetherScraper Repo">
+      <info compressed="false">https://raw.githubusercontent.com/aether-addons/AetherRepo/main/addons.xml</info>
+      <checksum>https://raw.githubusercontent.com/aether-addons/AetherRepo/main/addons.xml.md5</checksum>
+      <datadir zip="true">https://raw.githubusercontent.com/aether-addons/AetherRepo/main/</datadir>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+      <summary lang="en_GB">Repository for AetherScraper add-ons.</summary>
+      <description lang="en_GB">Installs and updates AetherScraper modules and companion add-ons.</description>
+      <platform>all</platform>
+      <license>MIT</license>
+      <assets>
+        <icon>resources/icon.png</icon>
+        <fanart>resources/fanart.png</fanart>
+      </assets>
+    </extension>
+  </addon>
+  <addon id="script.module.aetherscraper" version="0.1.0" name="AetherScraper" provider-name="AetherScraper">
+    <requires>
+      <import addon="xbmc.python" version="3.0.1" />
+    </requires>
+    <extension point="xbmc.python.module" library="lib" />
+    <extension point="xbmc.addon.metadata">
+      <summary lang="en_GB">Configurable media provider framework for Kodi add-ons.</summary>
+      <description lang="en_GB">Reusable Python module for legal, user-configured media provider integrations in Kodi add-ons. Provides provider registry, filtering, normalization, retry hooks, lifecycle helpers, and support utilities.</description>
+      <disclaimer lang="en_GB">Use only with sources you own, have permission to access, or that are publicly licensed. This module does not bypass DRM, paywalls, or access controls.</disclaimer>
+      <platform>all</platform>
+      <license>MIT</license>
+      <source>https://example.invalid/aetherscraper</source>
+      <news>Added safe module-only scraper framework with lifecycle helpers, support utilities, provider discovery, filtering, and external-provider adapters.</news>
+      <assets>
+        <icon>resources/icon.png</icon>
+        <fanart>resources/fanart.png</fanart>
+      </assets>
+    </extension>
+  </addon>
+  <addon id="plugin.program.aetherscraper" version="0.1.0" name="AetherScraper Tools" provider-name="AetherScraper">
+    <requires>
+      <import addon="xbmc.python" version="3.0.1" />
+      <import addon="script.module.aetherscraper" version="0.1.0" />
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+      <provides>executable</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+      <summary lang="en_GB">Program launcher for AetherScraper settings and support tools.</summary>
+      <description lang="en_GB">Visible Program add-on companion for script.module.aetherscraper. Opens module settings, provider summaries, safe provider actions, external setup help, and diagnostics without duplicating core code.</description>
+      <disclaimer lang="en_GB">Use only with sources you own, have permission to access, or that are publicly licensed. This add-on does not bypass DRM, paywalls, or access controls.</disclaimer>
+      <platform>all</platform>
+      <license>MIT</license>
+      <source>https://example.invalid/aetherscraper</source>
+      <news>Added companion Program launcher for the AetherScraper module.</news>
+      <assets>
+        <icon>resources/icon.png</icon>
+        <fanart>resources/fanart.png</fanart>
+      </assets>
+    </extension>
+  </addon>
+</addons>

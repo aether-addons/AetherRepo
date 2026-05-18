@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="repository.aetherscraper" version="0.1.0" name="AetherScraper Repo" provider-name="AetherScraper">
+  <requires>
+    <import addon="xbmc.addon" version="12.0.0" />
+  </requires>
+  <extension point="xbmc.addon.repository" name="AetherScraper Repo">
+    <info compressed="false">https://raw.githubusercontent.com/aether-addons/AetherRepo/main/addons.xml</info>
+    <checksum>https://raw.githubusercontent.com/aether-addons/AetherRepo/main/addons.xml.md5</checksum>
+    <datadir zip="true">https://raw.githubusercontent.com/aether-addons/AetherRepo/main/</datadir>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="en_GB">Repository for AetherScraper add-ons.</summary>
+    <description lang="en_GB">Installs and updates AetherScraper modules and companion add-ons.</description>
+    <platform>all</platform>
+    <license>MIT</license>
+    <assets>
+      <icon>resources/icon.png</icon>
+      <fanart>resources/fanart.png</fanart>
+    </assets>
+  </extension>
+</addon>
