@@ -171,40 +171,24 @@ def write_repository_addon(root: Path, source: Path, datadir_url: str) -> Path:
 
 
 def write_pages_indexes(root: Path, addon_dirs: list[Path]) -> None:
-    """Write simple GitHub Pages indexes for Kodi File Manager browsing."""
+    """Write simple GitHub Pages index for Kodi File Manager browsing."""
     (root / ".nojekyll").write_text("", encoding="utf-8")
-    rows = []
-    for addon_dir in addon_dirs:
-        addon_id, version, _ = parse_addon(addon_dir)
-        zip_name = f"{addon_id}-{version}.zip"
-        zip_href = f"{addon_id}/{zip_name}"
-        rows.append(
-            f'      <li><a href="{html.escape(zip_href)}">{html.escape(zip_href)}</a></li>'
-        )
-        addon_index = root / addon_id / "index.html"
-        addon_index.write_text(
-            "<!doctype html>\n"
-            "<html><head><meta charset=\"utf-8\">"
-            f"<title>{html.escape(addon_id)}</title></head>\n"
-            "<body>\n"
-            f"  <h1>{html.escape(addon_id)}</h1>\n"
-            "  <ul>\n"
-            f"    <li><a href=\"{html.escape(zip_name)}\">{html.escape(zip_name)}</a></li>\n"
-            "  </ul>\n"
-            "</body></html>\n",
-            encoding="utf-8",
-        )
+
+    repo_dir = next(addon_dir for addon_dir in addon_dirs if addon_dir.name == REPO_ID)
+    repo_id, repo_version, _ = parse_addon(repo_dir)
+    zip_name = f"{repo_id}-{repo_version}.zip"
+    zip_href = f"{repo_id}/{zip_name}"
 
     (root / "index.html").write_text(
         "<!doctype html>\n"
-        "<html><head><meta charset=\"utf-8\">"
+        '<html><head><meta charset="utf-8">'
         "<title>AetherRepo</title></head>\n"
         "<body>\n"
         "  <h1>AetherRepo</h1>\n"
-        "  <p>Kodi install repository and hosted add-on zips.</p>\n"
+        "  <p>Install this zip in Kodi, then install add-ons from the AetherScraper Repo.</p>\n"
         "  <ul>\n"
-        + "\n".join(rows)
-        + "\n  </ul>\n"
+        f'    <li><a href="{html.escape(zip_href)}">{html.escape(zip_name)}</a></li>\n'
+        "  </ul>\n"
         "</body></html>\n",
         encoding="utf-8",
     )
