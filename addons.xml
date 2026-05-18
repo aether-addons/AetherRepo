@@ -42,7 +42,7 @@
       </assets>
     </extension>
   </addon>
-  <addon id="plugin.program.aetherscraper" version="0.1.1" name="AetherScraper Tools" provider-name="AetherScraper">
+  <addon id="plugin.program.aetherscraper" version="0.1.2" name="AetherScraper" provider-name="AetherScraper">
     <requires>
       <import addon="xbmc.python" version="3.0.1" />
       <import addon="script.module.aetherscraper" version="0.1.1" />
@@ -57,7 +57,7 @@
       <platform>all</platform>
       <license>MIT</license>
       <source>https://example.invalid/aetherscraper</source>
-      <news>Updated AetherScraper Tools artwork with refreshed red-orange and turquoise branding.</news>
+      <news>Renamed visible Program add-on from AetherScraper Tools to AetherScraper.</news>
       <assets>
         <icon>resources/icon.png</icon>
         <fanart>resources/fanart.png</fanart>
