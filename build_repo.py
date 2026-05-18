@@ -21,7 +21,7 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 REPO_ID = "repository.aetherscraper"
 REPO_NAME = "Aether Repo"
-REPO_VERSION = "0.1.2"
+REPO_VERSION = "0.1.3"
 GITHUB_OWNER = "aether-addons"
 GITHUB_REPOSITORY = "AetherRepo"
 DEFAULT_BRANCH = "main"
@@ -54,6 +54,10 @@ def repo_root() -> Path:
 
 def github_raw_url(branch: str = DEFAULT_BRANCH) -> str:
     return f"https://raw.githubusercontent.com/{GITHUB_OWNER}/{GITHUB_REPOSITORY}/{branch}/"
+
+
+def github_pages_url() -> str:
+    return f"https://{GITHUB_OWNER}.github.io/{GITHUB_REPOSITORY}/"
 
 
 def default_windows_file_url(root: Path) -> str:
@@ -150,9 +154,12 @@ def write_repository_addon(root: Path, source: Path, datadir_url: str) -> Path:
         f"""    <import addon="xbmc.addon" version="12.0.0" />\n"""
         f"""  </requires>\n"""
         f'''  <extension point="xbmc.addon.repository" name="{REPO_NAME}">\n'''
-        f"""    <info compressed="false">{datadir_url}addons.xml</info>\n"""
-        f"""    <checksum>{datadir_url}addons.xml.md5</checksum>\n"""
-        f"""    <datadir zip="true">{datadir_url}</datadir>\n"""
+        f"""    <dir>\n"""
+        f"""      <info compressed="false">{datadir_url}addons.xml</info>\n"""
+        f"""      <checksum>{datadir_url}addons.xml.md5</checksum>\n"""
+        f"""      <datadir zip="true">{datadir_url}</datadir>\n"""
+        f"""      <hashes>false</hashes>\n"""
+        f"""    </dir>\n"""
         f"""  </extension>\n"""
         f"""  <extension point="xbmc.addon.metadata">\n"""
         f"""    <summary lang="en_GB">Repository for AetherScraper add-ons.</summary>\n"""
@@ -292,7 +299,7 @@ def main() -> int:
     elif args.local_file_url:
         datadir_url = default_windows_file_url(root)
     else:
-        datadir_url = github_raw_url(args.github_branch)
+        datadir_url = github_pages_url()
     build(Path(args.source).resolve(), addons, datadir_url.rstrip("/") + "/")
     return 0
 

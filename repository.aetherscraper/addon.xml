@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="repository.aetherscraper" version="0.1.2" name="Aether Repo" provider-name="AetherScraper">
+<addon id="repository.aetherscraper" version="0.1.3" name="Aether Repo" provider-name="AetherScraper">
   <requires>
     <import addon="xbmc.addon" version="12.0.0" />
   </requires>
   <extension point="xbmc.addon.repository" name="Aether Repo">
-    <info compressed="false">https://raw.githubusercontent.com/aether-addons/AetherRepo/main/addons.xml</info>
-    <checksum>https://raw.githubusercontent.com/aether-addons/AetherRepo/main/addons.xml.md5</checksum>
-    <datadir zip="true">https://raw.githubusercontent.com/aether-addons/AetherRepo/main/</datadir>
+    <dir>
+      <info compressed="false">https://aether-addons.github.io/AetherRepo/addons.xml</info>
+      <checksum>https://aether-addons.github.io/AetherRepo/addons.xml.md5</checksum>
+      <datadir zip="true">https://aether-addons.github.io/AetherRepo/</datadir>
+      <hashes>false</hashes>
+    </dir>
   </extension>
   <extension point="xbmc.addon.metadata">
     <summary lang="en_GB">Repository for AetherScraper add-ons.</summary>
