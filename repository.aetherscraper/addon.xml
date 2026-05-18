@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="repository.aetherscraper" version="0.1.7" name="Aether Repo" provider-name="Aether">
+<addon id="repository.aetherscraper" version="0.1.8" name="Aether Repo" provider-name="Aether">
   <requires>
     <import addon="xbmc.addon" version="12.0.0" />
   </requires>

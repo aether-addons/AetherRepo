@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <addons>
-  <addon id="repository.aetherscraper" version="0.1.7" name="Aether Repo" provider-name="Aether">
+  <addon id="repository.aetherscraper" version="0.1.8" name="Aether Repo" provider-name="Aether">
     <requires>
       <import addon="xbmc.addon" version="12.0.0" />
     </requires>
@@ -23,7 +23,7 @@
       </assets>
     </extension>
   </addon>
-  <addon id="script.module.aetherscraper" version="0.1.1" name="AetherScraper" provider-name="AetherScraper">
+  <addon id="script.module.aetherscraper" version="0.1.2" name="AetherScraper" provider-name="AetherScraper">
     <requires>
       <import addon="xbmc.python" version="3.0.1" />
     </requires>
@@ -35,17 +35,17 @@
       <platform>all</platform>
       <license>MIT</license>
       <source>https://example.invalid/aetherscraper</source>
-      <news>Updated AetherScraper artwork with refreshed red-orange and turquoise branding.</news>
+      <news>Updated AetherScraper icon with a transparent background and distinct scraper branding.</news>
       <assets>
         <icon>resources/icon.png</icon>
         <fanart>resources/fanart.png</fanart>
       </assets>
     </extension>
   </addon>
-  <addon id="plugin.program.aetherscraper" version="0.1.2" name="AetherScraper" provider-name="AetherScraper">
+  <addon id="plugin.program.aetherscraper" version="0.1.3" name="AetherScraper" provider-name="AetherScraper">
     <requires>
       <import addon="xbmc.python" version="3.0.1" />
-      <import addon="script.module.aetherscraper" version="0.1.1" />
+      <import addon="script.module.aetherscraper" version="0.1.2" />
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
       <provides>executable</provides>
@@ -57,7 +57,7 @@
       <platform>all</platform>
       <license>MIT</license>
       <source>https://example.invalid/aetherscraper</source>
-      <news>Renamed visible Program add-on from AetherScraper Tools to AetherScraper.</news>
+      <news>Updated AetherScraper icon with a transparent background and scraper-focused branding.</news>
       <assets>
         <icon>resources/icon.png</icon>
         <fanart>resources/fanart.png</fanart>

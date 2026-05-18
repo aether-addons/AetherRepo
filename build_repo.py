@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import html
+import json
 import os
 import shutil
 import sys
@@ -21,7 +22,7 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 REPO_ID = "repository.aetherscraper"
 REPO_NAME = "Aether Repo"
-REPO_VERSION = "0.1.7"
+REPO_VERSION = "0.1.8"
 GITHUB_OWNER = "aether-addons"
 GITHUB_REPOSITORY = "AetherRepo"
 DEFAULT_BRANCH = "main"
@@ -134,12 +135,12 @@ def write_repository_addon(root: Path, source: Path, datadir_url: str) -> Path:
     resources = repo_dir / "resources"
     resources.mkdir(parents=True, exist_ok=True)
 
-    # Reuse AetherScraper icon/fanart if available.
+    # Keep repository-specific artwork when present; fall back to scraper artwork.
     source_base = source / "script.module.aetherscraper" / "resources"
     for name in ("icon.png", "fanart.png"):
         src = source_base / name
         dst = resources / name
-        if src.is_file():
+        if src.is_file() and not dst.is_file():
             shutil.copy2(src, dst)
 
     addon_xml = repo_dir / "addon.xml"
@@ -229,6 +230,23 @@ def write_addons_xml(root: Path, addon_dirs: list[Path]) -> None:
     ET.parse(addons_xml)  # fail fast if malformed
 
 
+def load_addon_ids(source: Path, manifest: Path | None, cli_addons: list[str] | None) -> list[str]:
+    if cli_addons:
+        return cli_addons
+
+    manifest_path = manifest or source / "repo-addons.json"
+    if not manifest_path.is_file():
+        return DEFAULT_ADDONS
+
+    data = json.loads(manifest_path.read_text(encoding="utf-8"))
+    addons = data.get("addons")
+    if not isinstance(addons, list) or not all(isinstance(addon, str) for addon in addons):
+        raise ValueError(f"{manifest_path} must contain an 'addons' string list")
+    if not addons:
+        raise ValueError(f"{manifest_path} must list at least one add-on")
+    return addons
+
+
 def build(source: Path, addon_ids: list[str], datadir_url: str) -> None:
     root = repo_root()
     repo_dir = write_repository_addon(root, source, datadir_url)
@@ -291,18 +309,25 @@ def main() -> int:
         "--addon",
         action="append",
         dest="addons",
-        help="Addon id to host; repeatable. Defaults to all supported Aether add-ons.",
+        help="Addon id to host; repeatable. Overrides repo-addons.json.",
+    )
+    parser.add_argument(
+        "--addon-manifest",
+        default=None,
+        help="JSON file with an 'addons' list. Defaults to <source>/repo-addons.json when present.",
     )
     args = parser.parse_args()
 
-    addons = args.addons or DEFAULT_ADDONS
+    source = Path(args.source).resolve()
+    manifest = Path(args.addon_manifest).resolve() if args.addon_manifest else None
+    addons = load_addon_ids(source, manifest, args.addons)
     if args.datadir_url:
         datadir_url = args.datadir_url
     elif args.local_file_url:
         datadir_url = default_windows_file_url(root)
     else:
         datadir_url = github_raw_url(args.github_branch)
-    build(Path(args.source).resolve(), addons, datadir_url.rstrip("/") + "/")
+    build(source, addons, datadir_url.rstrip("/") + "/")
     return 0
 
 
