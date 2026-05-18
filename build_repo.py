@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import html
 import os
 import shutil
 import sys
@@ -166,6 +167,46 @@ def write_repository_addon(root: Path, source: Path, datadir_url: str) -> Path:
     return repo_dir
 
 
+def write_pages_indexes(root: Path, addon_dirs: list[Path]) -> None:
+    """Write simple GitHub Pages indexes for Kodi File Manager browsing."""
+    (root / ".nojekyll").write_text("", encoding="utf-8")
+    rows = []
+    for addon_dir in addon_dirs:
+        addon_id, version, _ = parse_addon(addon_dir)
+        zip_name = f"{addon_id}-{version}.zip"
+        zip_href = f"{addon_id}/{zip_name}"
+        rows.append(
+            f'      <li><a href="{html.escape(zip_href)}">{html.escape(zip_href)}</a></li>'
+        )
+        addon_index = root / addon_id / "index.html"
+        addon_index.write_text(
+            "<!doctype html>\n"
+            "<html><head><meta charset=\"utf-8\">"
+            f"<title>{html.escape(addon_id)}</title></head>\n"
+            "<body>\n"
+            f"  <h1>{html.escape(addon_id)}</h1>\n"
+            "  <ul>\n"
+            f"    <li><a href=\"{html.escape(zip_name)}\">{html.escape(zip_name)}</a></li>\n"
+            "  </ul>\n"
+            "</body></html>\n",
+            encoding="utf-8",
+        )
+
+    (root / "index.html").write_text(
+        "<!doctype html>\n"
+        "<html><head><meta charset=\"utf-8\">"
+        "<title>AetherRepo</title></head>\n"
+        "<body>\n"
+        "  <h1>AetherRepo</h1>\n"
+        "  <p>Kodi install repository and hosted add-on zips.</p>\n"
+        "  <ul>\n"
+        + "\n".join(rows)
+        + "\n  </ul>\n"
+        "</body></html>\n",
+        encoding="utf-8",
+    )
+
+
 def write_addons_xml(root: Path, addon_dirs: list[Path]) -> None:
     addons = ET.Element("addons")
     for addon_dir in addon_dirs:
@@ -200,6 +241,7 @@ def build(source: Path, addon_ids: list[str], datadir_url: str) -> None:
         zip_addon(addon_dir, root / addon_id / f"{addon_id}-{version}.zip")
 
     write_addons_xml(root, addon_dirs)
+    write_pages_indexes(root, addon_dirs)
 
     print(f"Repository: {root}")
     print(f"Source:     {source}")
