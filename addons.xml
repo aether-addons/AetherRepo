@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <addons>
-  <addon id="repository.aetherscraper" version="0.1.0" name="AetherScraper Repo" provider-name="AetherScraper">
+  <addon id="repository.aetherscraper" version="0.1.1" name="AetherScraper Repo" provider-name="AetherScraper">
     <requires>
       <import addon="xbmc.addon" version="12.0.0" />
     </requires>
@@ -20,7 +20,7 @@
       </assets>
     </extension>
   </addon>
-  <addon id="script.module.aetherscraper" version="0.1.0" name="AetherScraper" provider-name="AetherScraper">
+  <addon id="script.module.aetherscraper" version="0.1.1" name="AetherScraper" provider-name="AetherScraper">
     <requires>
       <import addon="xbmc.python" version="3.0.1" />
     </requires>
@@ -32,17 +32,17 @@
       <platform>all</platform>
       <license>MIT</license>
       <source>https://example.invalid/aetherscraper</source>
-      <news>Added safe module-only scraper framework with lifecycle helpers, support utilities, provider discovery, filtering, and external-provider adapters.</news>
+      <news>Updated AetherScraper artwork with refreshed red-orange and turquoise branding.</news>
       <assets>
         <icon>resources/icon.png</icon>
         <fanart>resources/fanart.png</fanart>
       </assets>
     </extension>
   </addon>
-  <addon id="plugin.program.aetherscraper" version="0.1.0" name="AetherScraper Tools" provider-name="AetherScraper">
+  <addon id="plugin.program.aetherscraper" version="0.1.1" name="AetherScraper Tools" provider-name="AetherScraper">
     <requires>
       <import addon="xbmc.python" version="3.0.1" />
-      <import addon="script.module.aetherscraper" version="0.1.0" />
+      <import addon="script.module.aetherscraper" version="0.1.1" />
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
       <provides>executable</provides>
@@ -54,7 +54,7 @@
       <platform>all</platform>
       <license>MIT</license>
       <source>https://example.invalid/aetherscraper</source>
-      <news>Added companion Program launcher for the AetherScraper module.</news>
+      <news>Updated AetherScraper Tools artwork with refreshed red-orange and turquoise branding.</news>
       <assets>
         <icon>resources/icon.png</icon>
         <fanart>resources/fanart.png</fanart>

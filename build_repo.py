@@ -20,7 +20,7 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 REPO_ID = "repository.aetherscraper"
 REPO_NAME = "AetherScraper Repo"
-REPO_VERSION = "0.1.0"
+REPO_VERSION = "0.1.1"
 GITHUB_OWNER = "aether-addons"
 GITHUB_REPOSITORY = "AetherRepo"
 DEFAULT_BRANCH = "main"
