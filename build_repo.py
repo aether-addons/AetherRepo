@@ -45,6 +45,7 @@ EXCLUDE_DIRS = {
     "tests",
 }
 EXCLUDE_SUFFIXES = {".pyc", ".pyo", ".pyd", ".swp", ".tmp", ".log", ".zip"}
+EXCLUDE_FILES = {"index.html"}
 
 
 def repo_root() -> Path:
@@ -82,6 +83,8 @@ def parse_addon(addon_dir: Path) -> tuple[str, str, ET.Element]:
 
 def should_skip(path: Path) -> bool:
     if any(part in EXCLUDE_DIRS for part in path.parts):
+        return True
+    if path.name in EXCLUDE_FILES:
         return True
     if path.name.startswith(".") and path.name not in {".gitignore"}:
         return True
