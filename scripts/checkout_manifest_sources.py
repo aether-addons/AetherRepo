@@ -18,7 +18,9 @@ def clone_url(repository: str, token: str | None) -> str:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Clone source repos from repo-sources.json")
+    parser = argparse.ArgumentParser(
+        description="Clone source repos from repo-sources.json"
+    )
     parser.add_argument("manifest", help="JSON file with a sources list")
     parser.add_argument("dest", help="Destination folder for checked-out source repos")
     parser.add_argument(
@@ -48,7 +50,9 @@ def main() -> int:
         if not isinstance(branch, str) or not branch:
             raise ValueError(f"{repository} has invalid branch")
         path = entry.get("path")
-        checkout_name = path if isinstance(path, str) and path else repository.rsplit("/", 1)[1]
+        checkout_name = (
+            path if isinstance(path, str) and path else repository.rsplit("/", 1)[1]
+        )
         checkout_dir = dest_root / checkout_name
         if checkout_dir.exists():
             shutil.rmtree(checkout_dir)

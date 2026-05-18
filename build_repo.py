@@ -104,7 +104,9 @@ def zip_addon(addon_dir: Path, out_zip: Path) -> None:
             rel = file_path.relative_to(addon_dir)
             if should_skip(rel):
                 continue
-            info = ZipInfo(Path(addon_id, rel).as_posix(), date_time=(1980, 1, 1, 0, 0, 0))
+            info = ZipInfo(
+                Path(addon_id, rel).as_posix(), date_time=(1980, 1, 1, 0, 0, 0)
+            )
             info.compress_type = ZIP_DEFLATED
             info.external_attr = 0o644 << 16
             archive.writestr(info, file_path.read_bytes())
@@ -133,7 +135,9 @@ def indent(element: ET.Element, level: int = 0) -> None:
         element.tail = pad
 
 
-def write_repository_addon(root: Path, source_roots: list[Path], datadir_url: str) -> Path:
+def write_repository_addon(
+    root: Path, source_roots: list[Path], datadir_url: str
+) -> Path:
     repo_dir = root / REPO_ID
     resources = repo_dir / "resources"
     resources.mkdir(parents=True, exist_ok=True)
@@ -268,7 +272,9 @@ def source_dir_from_entry(entry: dict[str, object], source_root: Path) -> Path:
     return (source_root / repository.rsplit("/", 1)[1]).resolve()
 
 
-def load_manifest_addon_dirs(manifest_path: Path, source_root: Path) -> tuple[list[Path], list[Path]]:
+def load_manifest_addon_dirs(
+    manifest_path: Path, source_root: Path
+) -> tuple[list[Path], list[Path]]:
     data = json.loads(manifest_path.read_text(encoding="utf-8"))
     sources = data.get("sources")
     if not isinstance(sources, list) or not sources:
@@ -283,10 +289,14 @@ def load_manifest_addon_dirs(manifest_path: Path, source_root: Path) -> tuple[li
         source_dir = source_dir_from_entry(entry, source_root)
         source_dirs.append(source_dir)
         addons = entry.get("addons")
-        if not isinstance(addons, list) or not addons or not all(
-            isinstance(addon, str) for addon in addons
+        if (
+            not isinstance(addons, list)
+            or not addons
+            or not all(isinstance(addon, str) for addon in addons)
         ):
-            raise ValueError(f"{manifest_path} source entries need non-empty 'addons' string lists")
+            raise ValueError(
+                f"{manifest_path} source entries need non-empty 'addons' string lists"
+            )
         for addon_id in addons:
             if addon_id in seen:
                 raise ValueError(f"duplicate addon id in {manifest_path}: {addon_id}")
@@ -377,7 +387,9 @@ def main() -> int:
 
     source = Path(args.source).resolve()
     manifest = Path(args.addon_manifest).resolve() if args.addon_manifest else None
-    sources_manifest = Path(args.sources_manifest).resolve() if args.sources_manifest else None
+    sources_manifest = (
+        Path(args.sources_manifest).resolve() if args.sources_manifest else None
+    )
     if args.datadir_url:
         datadir_url = args.datadir_url
     elif args.local_file_url:
